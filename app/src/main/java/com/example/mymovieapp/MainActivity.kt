@@ -30,5 +30,13 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.navigation_home,
+                R.id.navigation_search,
+                R.id.navigation_saved -> supportActionBar?.hide()
+                else -> supportActionBar?.show()
+            }
+        }
     }
 }
