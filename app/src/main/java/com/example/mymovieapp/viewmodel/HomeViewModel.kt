@@ -72,5 +72,4 @@ class HomeViewModel(private val movieDao: MovieIdDao) : ViewModel() {
     fun fetchTrendingMoviesWithCacheSupport() {
         repository.fetchFromCacheIfValid()
     }
-
 }

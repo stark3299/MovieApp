@@ -8,6 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.mymovieapp.databinding.FragmentSearchBinding
 import com.example.mymovieapp.model.RecommendedMovie
@@ -24,6 +26,7 @@ class SearchFragment : Fragment() {
     private var recommendedMoviesList : List<RecommendedMovie> = emptyList()
     private lateinit var searchAdapter: SearchMovieAdapter
     private val instance : SharedFunction = SharedFunction.getInstance()
+    private lateinit var navController: NavController
     private val searchViewModel by lazy {
         ViewModelProvider(this, factory)[SearchViewModel::class.java]
     }
@@ -36,7 +39,8 @@ class SearchFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        searchAdapter = SearchMovieAdapter{}
+        navController = findNavController()
+        searchAdapter = SearchMovieAdapter(navController){}
         setSearchItemRecyclerView()
         setObservers()
         if(instance.checkNullOrNot(instance.getSavedMovieId(context).toString())){
@@ -94,7 +98,7 @@ class SearchFragment : Fragment() {
 
     private fun setRecommendedAdapter(list : List<RecommendedMovie>){
         binding.recommendedRecyclerView.layoutManager = GridLayoutManager(requireContext(), 3)
-        binding.recommendedRecyclerView.adapter = RecommendedAdapter(list)
+        binding.recommendedRecyclerView.adapter = RecommendedAdapter(navController, list)
     }
 
     override fun onDestroyView() {

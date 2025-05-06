@@ -4,6 +4,7 @@ import android.util.Log
 import com.example.mymovieapp.model.NetworkModel
 import com.example.mymovieapp.utils.GlobalConstant
 import com.google.gson.JsonObject
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
@@ -18,8 +19,19 @@ object RetrofitManager {
         level = HttpLoggingInterceptor.Level.BODY
     }
 
+    private val authInterceptor = Interceptor { chain ->
+        val original = chain.request()
+        val newRequest = original.newBuilder()
+            .addHeader("Authorization", "Bearer ${GlobalConstant.API_Read_Access_Token}") // ✅ Add token from constant
+            .addHeader("accept", "application/json")
+            .addHeader("content-type", "application/json")
+            .build()
+        chain.proceed(newRequest)
+    }
+
     private val okHttpClient = OkHttpClient.Builder()
         .addInterceptor(loggingInterceptor)
+        .addInterceptor(authInterceptor)
         .build()
 
     private val retrofit: Retrofit = Retrofit.Builder()

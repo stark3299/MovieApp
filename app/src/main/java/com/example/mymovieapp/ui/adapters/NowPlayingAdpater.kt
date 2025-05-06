@@ -5,12 +5,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mymovieapp.R
 import com.example.mymovieapp.model.NowShowingMovie
+import com.example.mymovieapp.utils.SharedFunction
 import com.example.mymovieapp.utils.loadImage
 
-class NowPlayingAdapter(private val movies: List<NowShowingMovie>) :
+class NowPlayingAdapter(private val movies: List<NowShowingMovie>, private val navController: NavController) :
     RecyclerView.Adapter<NowPlayingAdapter.NowPlayingViewHolder>() {
 
     inner class NowPlayingViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -26,8 +28,13 @@ class NowPlayingAdapter(private val movies: List<NowShowingMovie>) :
     override fun onBindViewHolder(holder: NowPlayingViewHolder, position: Int) {
         val movie = movies[position]
         holder.title.visibility = View.GONE
-//        holder.title.text = movie.title
-        holder.poster.loadImage("https://image.tmdb.org/t/p/original/${movies[position].posterPath}")
+        holder.poster.loadImage("https://image.tmdb.org/t/p/original/${movie.posterPath}")
+        holder.poster.setOnClickListener {
+            SharedFunction.getInstance().openMovieDetailsPage(movie.id.toString(), navController)
+        }
+        holder.itemView.setOnClickListener {
+            SharedFunction.getInstance().openMovieDetailsPage(movie.id.toString(), navController)
+        }
     }
 
     override fun getItemCount(): Int = movies.size.coerceAtMost(10)

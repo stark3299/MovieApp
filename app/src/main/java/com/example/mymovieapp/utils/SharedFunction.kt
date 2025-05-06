@@ -2,6 +2,8 @@ package com.example.mymovieapp.utils
 
 import android.content.Context
 import android.os.Bundle
+import androidx.navigation.NavController
+import com.example.mymovieapp.R
 import com.example.mymovieapp.db.MovieDatabase
 import kotlinx.coroutines.runBlocking
 
@@ -46,6 +48,21 @@ class SharedFunction private constructor() {
             bundleParams.put(key, value)
         }
         return bundleParams
+    }
+
+    fun openMovieDetailsPage(movieId: String, navController: NavController){
+//        val fragment = MovieDetailFragment.newInstance(movieId)
+//        fragmentManager.beginTransaction()
+//            .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out) // Optional: Add animations
+//            .add(R.id.nav_host_fragment_activity_main, fragment) // Use the container ID where HomeFragment is added
+//            .addToBackStack(null) // Optional: Add to back stack so it can be popped off
+//            .commit()
+
+        val bundle = Bundle().apply {
+            putString("movieId", movieId)
+        }
+        navController.navigate(R.id.movieDetailFragment, bundle)
+
     }
 
     private fun convertBundleToParamsMap(bundle: Bundle): HashMap<String, String> {
