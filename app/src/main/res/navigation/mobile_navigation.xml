@@ -1,25 +1,34 @@
-<?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/navigation_home">
+    app:startDestination="@id/navigation_home">
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="com.example.mymovieapp.ui.home.HomeFragment"
+        android:name="com.example.mymovieapp.ui.HomeFragment"
         android:label="@string/title_home"
         tools:layout="@layout/fragment_home" />
 
     <fragment
-        android:id="@+id/navigation_dashboard"
-        android:name="com.example.mymovieapp.ui.search.DashboardFragment"
+        android:id="@+id/navigation_search"
+        android:name="com.example.mymovieapp.ui.SearchFragment"
         android:label="@string/title_search"
         tools:layout="@layout/fragment_search" />
 
     <fragment
-        android:id="@+id/navigation_notifications"
-        android:name="com.example.mymovieapp.ui.saved.SavedFragment"
+        android:id="@+id/navigation_saved"
+        android:name="com.example.mymovieapp.ui.SavedFragment"
         android:label="@string/title_saved"
         tools:layout="@layout/fragment_saved" />
+
+    <!-- Independent MovieDetailFragment (outside bottom navigation flow) -->
+    <fragment
+        android:id="@+id/movieDetailFragment"
+        android:name="com.example.mymovieapp.ui.MovieDetailFragment"
+        android:label="Movie Detail">
+        <argument
+            android:name="movieId"
+            app:argType="string" />
+    </fragment>
 </navigation>
