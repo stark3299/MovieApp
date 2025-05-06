@@ -1,11 +1,10 @@
 package com.example.mymovieapp.ui
 
-import android.Manifest
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.RequiresPermission
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
@@ -49,6 +48,9 @@ class HomeFragment : Fragment() {
         } else {
             homeViewModel.loadTrendingFromCache()
             homeViewModel.loadNowShowingFromCache()
+        }
+        binding.appIcon.setOnClickListener {
+            Toast.makeText(requireContext(), "Welcome to MoviePlex", Toast.LENGTH_LONG).show()
         }
     }
 

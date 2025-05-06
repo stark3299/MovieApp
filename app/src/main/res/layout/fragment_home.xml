@@ -58,11 +58,13 @@
                     android:layout_height="1dp"
                     android:layout_weight="1" />
 
-                <ImageView
+                <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/appIcon"
                     android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_height="45dp"
+                    android:paddingTop="10dp"
                     android:layout_gravity="end"
+                    android:src="@drawable/app_logo"
                     android:contentDescription="App Icon" />
             </LinearLayout>
 
