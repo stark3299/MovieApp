@@ -1,5 +1,6 @@
 package com.example.mymovieapp.ui
 
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -22,14 +23,12 @@ class SearchFragment : Fragment() {
 
     private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
-    val factory = SearchViewModel.Factory()
+    private lateinit var factory: SearchViewModel.Factory
     private var recommendedMoviesList : List<RecommendedMovie> = emptyList()
     private lateinit var searchAdapter: SearchMovieAdapter
     private val instance : SharedFunction = SharedFunction.getInstance()
     private lateinit var navController: NavController
-    private val searchViewModel by lazy {
-        ViewModelProvider(this, factory)[SearchViewModel::class.java]
-    }
+    private lateinit var searchViewModel: SearchViewModel
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
@@ -39,15 +38,21 @@ class SearchFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        factory = SearchViewModel.Factory(requireContext())
+        searchViewModel = ViewModelProvider(this, factory)[SearchViewModel::class.java]
         navController = findNavController()
         searchAdapter = SearchMovieAdapter(navController){}
         setSearchItemRecyclerView()
         setObservers()
-        if(instance.checkNullOrNot(instance.getSavedMovieId(context).toString())){
-            searchViewModel.getRecommendedMovies(instance.getSavedMovieId(context).toString())
+        if(SharedFunction.getInstance().isInternetAvailable(requireContext())){
+            if(instance.checkNullOrNot(instance.getSavedMovieId(context).toString())){
+                searchViewModel.getRecommendedMovies(instance.getSavedMovieId(context).toString())
+            } else {
+                binding.recommendedRecyclerView.visibility = View.GONE
+                binding.recommendedTitle.visibility = View.GONE
+            }
         } else {
-            binding.recommendedRecyclerView.visibility = View.GONE
-            binding.recommendedTitle.visibility = View.GONE
+            searchViewModel.loadRecommendedFromCache()
         }
         binding.searchEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}

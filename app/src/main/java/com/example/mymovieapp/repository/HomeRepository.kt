@@ -6,7 +6,9 @@ import com.example.mymovieapp.db.MovieIdDao
 import com.example.mymovieapp.model.DataManager
 import com.example.mymovieapp.model.NetworkModel
 import com.example.mymovieapp.model.NowShowingModel
+import com.example.mymovieapp.model.NowShowingMoviesCache
 import com.example.mymovieapp.model.RoomMoviesId
+import com.example.mymovieapp.model.TrendingMoviesCache
 import com.example.mymovieapp.model.TrendingMoviesModel
 import com.example.mymovieapp.utils.GlobalConstant
 import com.google.gson.JsonObject
@@ -27,18 +29,6 @@ class HomeRepository(private val movieDao: MovieIdDao) {
     private val _nowShowingMoviesFlow = MutableSharedFlow<NowShowingModel>(replay = 1)
     val nowShowingMoviesFlow: SharedFlow<NowShowingModel> = _nowShowingMoviesFlow
     private var lastFetchedTime: Long = 0L
-    private val cacheExpiryMillis = 5 * 60 * 1000
-
-    fun fetchFromCacheIfValid() {
-        val currentTime = System.currentTimeMillis()
-        if (trendingMoviesModel != null && (currentTime - lastFetchedTime) < cacheExpiryMillis) {
-            repositoryScope.launch {
-                _trendingMoviesFlow.emit(trendingMoviesModel!!)
-            }
-        } else {
-            trendingMoviesAPI()
-        }
-    }
 
     fun insertMovie(movie: RoomMoviesId) {
         repositoryScope.launch {
@@ -67,6 +57,9 @@ class HomeRepository(private val movieDao: MovieIdDao) {
                         lastFetchedTime = System.currentTimeMillis()
 
                         repositoryScope.launch {
+                            movieDao.saveTrendingMoviesCache(
+                                TrendingMoviesCache(json = jsonString, timestamp = lastFetchedTime)
+                            )
                             _trendingMoviesFlow.emit(parsedData)
                         }
                     } else {
@@ -99,11 +92,13 @@ class HomeRepository(private val movieDao: MovieIdDao) {
                         val jsonString = response.toString()
                         Log.d("NowShowingRepo", "Received data: $jsonString")
                         val parsedData = json.decodeFromString<NowShowingModel>(jsonString)
-                        // Cache and emit
                         nowShowingModel = parsedData
                         lastFetchedTime = System.currentTimeMillis()
 
                         repositoryScope.launch {
+                            movieDao.saveNowShowingMoviesCache(
+                                NowShowingMoviesCache(json = jsonString, timestamp = lastFetchedTime)
+                            )
                             _nowShowingMoviesFlow.emit(parsedData)
                         }
                     } else {
@@ -118,5 +113,24 @@ class HomeRepository(private val movieDao: MovieIdDao) {
                 Log.e("RepoError", error)
             }
         })
+    }
+    suspend fun loadTrendingMoviesFromCache() {
+        val cache = movieDao.getTrendingMoviesCache()
+        cache?.let {
+            val json = Json { ignoreUnknownKeys = true }
+            val parsed = json.decodeFromString<TrendingMoviesModel>(it.json)
+            trendingMoviesModel = parsed
+            _trendingMoviesFlow.emit(parsed)
+        }
+    }
+
+    suspend fun loadNowShowingMoviesFromCache() {
+        val cache = movieDao.getNowShowingMoviesCache()
+        cache?.let {
+            val json = Json { ignoreUnknownKeys = true }
+            val parsed = json.decodeFromString<NowShowingModel>(it.json)
+            nowShowingModel = parsed
+            _nowShowingMoviesFlow.emit(parsed)
+        }
     }
 }

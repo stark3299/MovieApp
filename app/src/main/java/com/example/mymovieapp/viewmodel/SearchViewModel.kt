@@ -1,5 +1,6 @@
 package com.example.mymovieapp.viewmodel
 
+import android.content.Context
 import android.os.Bundle
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -18,18 +19,18 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 
-class SearchViewModel : ViewModel() {
+class SearchViewModel(private val context: Context) : ViewModel() {
 
-    val repository : SearchRepository = SearchRepository()
+    val repository : SearchRepository = SearchRepository(context)
     val searchMoviesList : MutableLiveData<List<SearchItem>> = MutableLiveData()
     val recommendedMoviesList : MutableLiveData<List<RecommendedMovie>> = MutableLiveData()
     private val _searchQuery = MutableStateFlow("")
 
-    class Factory() : ViewModelProvider.Factory {
+    class Factory(private val context: Context) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(SearchViewModel::class.java)) {
                 @Suppress("UNCHECKED_CAST")
-                return SearchViewModel() as T
+                return SearchViewModel(context) as T
             }
             throw IllegalArgumentException("Unknown ViewModel class")
         }
@@ -78,6 +79,12 @@ class SearchViewModel : ViewModel() {
 
     internal fun getRecommendedMovies(movieId : String){
         repository.recommendedMoviesAPI(movieId, makeRecommendedBundle())
+    }
+
+    fun loadRecommendedFromCache() {
+        viewModelScope.launch {
+            repository.loadRecommendedMoviesFromCache()
+        }
     }
 
     fun makeRecommendedBundle() : Bundle{

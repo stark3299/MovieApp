@@ -69,7 +69,15 @@ class HomeViewModel(private val movieDao: MovieIdDao) : ViewModel() {
         repository.nowShowingMoviesAPI()
     }
 
-    fun fetchTrendingMoviesWithCacheSupport() {
-        repository.fetchFromCacheIfValid()
+    fun loadTrendingFromCache() {
+        viewModelScope.launch {
+            repository.loadTrendingMoviesFromCache()
+        }
+    }
+
+    fun loadNowShowingFromCache() {
+        viewModelScope.launch {
+            repository.loadNowShowingMoviesFromCache()
+        }
     }
 }

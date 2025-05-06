@@ -1,5 +1,6 @@
 package com.example.mymovieapp.viewmodel
 
+import android.content.Context
 import android.os.Bundle
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -10,15 +11,15 @@ import com.example.mymovieapp.model.SavedMoviesModel
 import com.example.mymovieapp.repository.SavedRepository
 import kotlinx.coroutines.launch
 
-class SavedViewModel : ViewModel() {
-    val repository : SavedRepository = SavedRepository()
+class SavedViewModel(private var context: Context) : ViewModel() {
+    val repository : SavedRepository = SavedRepository(context)
     val watchlistMoviesDetails : MutableLiveData<List<SavedMovieItem>> = MutableLiveData()
 
-    class Factory() : ViewModelProvider.Factory {
+    class Factory(private var context: Context) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(SavedViewModel::class.java)) {
                 @Suppress("UNCHECKED_CAST")
-                return SavedViewModel() as T
+                return SavedViewModel(context) as T
             }
             throw IllegalArgumentException("Unknown ViewModel class")
         }
@@ -46,5 +47,11 @@ class SavedViewModel : ViewModel() {
         bundle.putInt("page",1)
         bundle.putString("sort_by","created_at.asc")
         return bundle
+    }
+
+    fun loadSavedMovieFromCache() {
+        viewModelScope.launch {
+            repository.loadSavedMoviesFromCache()
+        }
     }
 }

@@ -1,7 +1,10 @@
 package com.example.mymovieapp.utils
 
+import android.Manifest
 import android.content.Context
+import android.net.ConnectivityManager
 import android.os.Bundle
+import androidx.annotation.RequiresPermission
 import androidx.navigation.NavController
 import com.example.mymovieapp.R
 import com.example.mymovieapp.db.MovieDatabase
@@ -63,5 +66,10 @@ class SharedFunction private constructor() {
             paramsMap[key] = value
         }
         return paramsMap
+    }
+
+    fun isInternetAvailable(context: Context): Boolean {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        return connectivityManager.activeNetworkInfo?.isConnected == true
     }
 }

@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.example.mymovieapp.databinding.FragmentSavedBinding
 import com.example.mymovieapp.model.SavedMovieItem
 import com.example.mymovieapp.ui.adapters.WatchListMoviesAdapter
+import com.example.mymovieapp.utils.SharedFunction
 import com.example.mymovieapp.viewmodel.SavedViewModel
 
 class SavedFragment : Fragment() {
@@ -30,11 +31,16 @@ class SavedFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val factory = SavedViewModel.Factory()
+        val factory = SavedViewModel.Factory(requireContext())
         navController = findNavController()
         savedViewModel = ViewModelProvider(this, factory)[SavedViewModel::class.java]
         setObservers()
-        savedViewModel.getWatchlistMovies()
+        if(SharedFunction.getInstance().isInternetAvailable(requireContext())){
+            savedViewModel.getWatchlistMovies()
+        } else {
+            savedViewModel.loadSavedMovieFromCache()
+        }
+
     }
 
     private fun setObservers(){

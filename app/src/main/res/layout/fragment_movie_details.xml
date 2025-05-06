@@ -115,7 +115,7 @@
             android:gravity="center"
             android:drawableLeft="@drawable/play_button"
             android:text="Play"
-            android:backgroundTint="@android:color/red"
+            android:backgroundTint="@color/red"
             android:textColor="@android:color/white" />
 
         <TextView

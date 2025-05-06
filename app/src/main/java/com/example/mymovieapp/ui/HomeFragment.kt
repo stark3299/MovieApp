@@ -1,9 +1,11 @@
 package com.example.mymovieapp.ui
 
+import android.Manifest
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresPermission
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
@@ -16,6 +18,7 @@ import com.example.mymovieapp.model.NowShowingMovie
 import com.example.mymovieapp.model.TrendingMovie
 import com.example.mymovieapp.ui.adapters.NowPlayingAdapter
 import com.example.mymovieapp.ui.adapters.TrendingAdapter
+import com.example.mymovieapp.utils.SharedFunction
 import com.example.mymovieapp.viewmodel.HomeViewModel
 
 class HomeFragment : Fragment() {
@@ -40,8 +43,13 @@ class HomeFragment : Fragment() {
         val factory = HomeViewModel.Factory(database.movieDao())
         homeViewModel = ViewModelProvider(this, factory)[HomeViewModel::class.java]
         setObservers()
-        homeViewModel.getTrendingMovies()
-        homeViewModel.getNowShowingMovies()
+        if (SharedFunction.getInstance().isInternetAvailable(requireContext())) {
+            homeViewModel.getTrendingMovies()
+            homeViewModel.getNowShowingMovies()
+        } else {
+            homeViewModel.loadTrendingFromCache()
+            homeViewModel.loadNowShowingFromCache()
+        }
     }
 
     private fun setObservers(){
