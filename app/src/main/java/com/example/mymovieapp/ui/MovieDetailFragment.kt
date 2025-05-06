@@ -55,6 +55,9 @@ class MovieDetailFragment : Fragment() {
         binding.backButton.setOnClickListener {
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
+        binding.shareButton.setOnClickListener {
+            makeShareLinkForMoviePage()
+        }
     }
 
     private fun setOnclickForUrl() {
@@ -67,6 +70,15 @@ class MovieDetailFragment : Fragment() {
                 Toast.makeText(requireContext(), "No URL available for this movie.", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    private fun makeShareLinkForMoviePage(){
+        val shareIntent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, "https://movieplex.com/movie?movieId=$movieId")
+            type = "text/plain"
+        }
+        startActivity(Intent.createChooser(shareIntent, "Share movie link"))
     }
 
     private fun savedToWatchList() {
@@ -145,16 +157,5 @@ class MovieDetailFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    companion object {
-        private const val ARG_MOVIE_ID = "movie_id"
-        fun newInstance(movieId: String): MovieDetailFragment {
-            val fragment = MovieDetailFragment()
-            val args = Bundle()
-            args.putString(ARG_MOVIE_ID, movieId)
-            fragment.arguments = args
-            return fragment
-        }
     }
 }

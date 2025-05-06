@@ -20,7 +20,6 @@ class SharedFunction private constructor() {
         }
     }
 
-    // Other functions you want to use with getInstance
     fun getSavedMovieId(context: Context?): Int? {
         if(context == null)
             return 0
@@ -51,18 +50,10 @@ class SharedFunction private constructor() {
     }
 
     fun openMovieDetailsPage(movieId: String, navController: NavController){
-//        val fragment = MovieDetailFragment.newInstance(movieId)
-//        fragmentManager.beginTransaction()
-//            .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out) // Optional: Add animations
-//            .add(R.id.nav_host_fragment_activity_main, fragment) // Use the container ID where HomeFragment is added
-//            .addToBackStack(null) // Optional: Add to back stack so it can be popped off
-//            .commit()
-
         val bundle = Bundle().apply {
             putString("movieId", movieId)
         }
         navController.navigate(R.id.movieDetailFragment, bundle)
-
     }
 
     private fun convertBundleToParamsMap(bundle: Bundle): HashMap<String, String> {

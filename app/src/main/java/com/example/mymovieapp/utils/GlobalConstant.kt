@@ -8,6 +8,7 @@ object GlobalConstant{
     const val recommended_movies_api_endpoint = "movie/movie_id/recommendations"
     const val details_movie_api_endpoint = "movie/movie_id"
     const val add_movie_to_watchlist_endpoint = "account/21982913/watchlist"
+    const val get_movies_to_watchlist_endpoint = "account/21982913/watchlist/movies"
     const val base_url = "https://api.themoviedb.org/3/"
     const val API_Read_Access_Token = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI5NWVmZGIyNTVjYmZjYWUwNTg3YmE1MjlkODg2MT" +
             "NlZiIsIm5iZiI6MS43NDYwNzc3NjY2MzM5OTk4ZSs5LCJzdWIiOiI2ODEzMDg0NmFjZmRjZWVkODI0NzQ1NGYiLCJzY29wZXMi" +
@@ -21,9 +22,6 @@ object GlobalConstant{
     const val recommended_movies_command_id = 104
     const val details_movie_command_id = 105
     const val add_movie_to_watchlist = 106
+    const val watchlist_movies = 107
 
-
-    //String Constants
-    const val home_fragment = "homeFragment"
-    const val search_fragment = "searchFragment"
 }
